@@ -1,0 +1,35 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"files.exclude": {
+		"out": false // set this to true to hide the "out" folder with the compiled JS files
+	},
+	"search.exclude": {
+		"out": true // set this to false to include "out" folder in search results
+	},
+	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+	"typescript.tsc.autoDetect": "off",
+	"clangd.arguments": [
+		"--background-index",
+		"--header-insertion=never",
+		"-j=15",
+		"--header-insertion-decorators",
+		"--clang-tidy=true",
+		"--limit-references=0",
+		"--limit-results=0",
+		"--function-arg-placeholders=false",
+		"--ranking-model=heuristics",
+		"--use-dirty-headers",
+		"--pch-storage=memory",
+		"--completion-parse=always",
+		"--all-scopes-completion=false",
+		"--rename-file-limit=200",
+		"--completion-style=detailed",
+		"--include-ineligible-results=false",
+		"--background-index-priority=low",
+		"--debug-origin=false",
+		"--fallback-style=LLVM",
+		"--import-insertions=false",
+		"--malloc-trim=true",
+		"--parse-forwarding-functions=true"
+	]
+}
