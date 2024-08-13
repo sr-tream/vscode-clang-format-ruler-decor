@@ -42,6 +42,7 @@ class RulerUpdateProvider implements vscode.Disposable {
 	private watchClangFormat?: vscode.FileSystemWatcher;
 	private onClangFormatChange?: vscode.Disposable;
 	private onClangFormatDelete?: vscode.Disposable;
+	private onClangFormatCreate?: vscode.Disposable;
 
 	constructor() {
 		this.onEditorChange = vscode.window.onDidChangeActiveTextEditor(this.didEditorChanged, this);
@@ -55,6 +56,7 @@ class RulerUpdateProvider implements vscode.Disposable {
 		this.watchClangFormat?.dispose();
 		this.onClangFormatChange?.dispose();
 		this.onClangFormatDelete?.dispose();
+		this.onClangFormatCreate?.dispose();
 	}
 
 	private async didEditorChanged(editor: vscode.TextEditor | undefined) {
@@ -67,19 +69,15 @@ class RulerUpdateProvider implements vscode.Disposable {
 		this.workspace = workspace;
 		if (workspace === undefined) return;
 
-		const clangFormatPath = path.join(workspace?.uri.fsPath, '.clang-format');
-		if (fs.existsSync(clangFormatPath)) {
-			this.watchClangFormat = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspace, '.clang-format'));
-			this.onClangFormatChange = this.watchClangFormat.onDidChange(async (uri) => { this.updateRuler() }, this);
-			this.onClangFormatDelete = this.watchClangFormat.onDidDelete(async (uri) => { this.updateRuler() }, this);
-		} else {
-			this.watchClangFormat?.dispose();
-			this.watchClangFormat = undefined;
-			this.onClangFormatChange?.dispose();
-			this.onClangFormatChange = undefined;
-			this.onClangFormatDelete?.dispose();
-			this.onClangFormatDelete = undefined;
-		}
+		this.onClangFormatChange?.dispose();
+		this.onClangFormatDelete?.dispose();
+		this.onClangFormatCreate?.dispose();
+		this.watchClangFormat?.dispose();
+
+		this.watchClangFormat = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspace, '.clang-format'));
+		this.onClangFormatChange = this.watchClangFormat.onDidChange(async (uri) => { this.updateRuler() }, this);
+		this.onClangFormatDelete = this.watchClangFormat.onDidDelete(async (uri) => { this.updateRuler() }, this);
+		this.onClangFormatCreate = this.watchClangFormat.onDidCreate(async (uri) => { this.updateRuler() }, this);
 
 		this.updateRuler();
 	}
